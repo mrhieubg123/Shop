@@ -226,6 +226,11 @@ return [
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
 
+        //scart
+        'Helper'       => App\Scart\Helper::class,
+        'FindClass'    => App\Scart\FindClass::class,
+        'ProcessData'  => App\Scart\ProcessData\Boot::class,
+
     ],
 
 ];

@@ -11,6 +11,41 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+Route::get('/', 'HomeController@index')->name('home');
+Route::get('/index.html', 'HomeController@index')->name('home');
+//Route::get('login','HomeController@login')->name('login');
+Route::prefix('admin')->namespace('Admin')->name('admin.')->group(function () {
+    Route::get('/index', 'AdminController@index')->name('index');
+    
+});
+
+//--Auth
+Route::group(['namespace' => 'Auth', 'prefix' => 'member'], function ($router) {
+    $router->get('/login.html', 'LoginController@showLoginForm')->name('login');
+    $router->post('/login.html', 'LoginController@login')->name('postLogin');
+    $router->get('/register.html', 'LoginController@showLoginForm')->name('register');
+    $router->post('/register.html', 'RegisterController@register')->name('postRegister');
+    $router->post('/logout', 'LoginController@logout')->name('logout');
+    $router->post('/password/email', 'ForgotPasswordController@sendResetLinkEmail')->name('password.email');
+    $router->post('/password/reset', 'ResetPasswordController@reset');
+    $router->get('/password/reset/{token}', 'ResetPasswordController@showResetForm')->name('password.reset');
+    $router->get('/forgot.html', 'ForgotPasswordController@showLinkRequestForm')->name('forgot');
+});
+//End Auth
+//Customer profile
+Route::group(['prefix' => 'member', 'middleware' => 'auth'], function ($router) {
+    $router->get('/', 'ShopAccount@index')->name('member.index');
+    $router->get('/order_list.html', 'ShopAccount@orderList')->name('member.order_list');
+    $router->get('/change_password.html', 'ShopAccount@changePassword')->name('member.change_password');
+    $router->post('/change_password.html', 'ShopAccount@postChangePassword')->name('member.post_change_password');
+    $router->get('/change_infomation.html', 'ShopAccount@changeInfomation')->name('member.change_infomation');
+    $router->post('/change_infomation.html', 'ShopAccount@postChangeInfomation')->name('member.post_change_infomation');
+});
+//End customer
+
+Route::prefix('')->namespace('Product')->name('product.')->group(function () {
+    //Route::get('/details', 'ProductController@details')->name('details');
+    Route::get('/cart', 'ProductController@cart')->name('cart');
+    Route::get('/details/{id}','ProductController@details')->name('details');
+    Route::get('/{id}','ProductController@addToCart')->name('addtocart');
 });

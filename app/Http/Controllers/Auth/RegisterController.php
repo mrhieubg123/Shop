@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\User;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
+use App\Models\EmailTemplate;
+use App\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class RegisterController extends Controller
 {
@@ -19,7 +20,7 @@ class RegisterController extends Controller
     | validation and creation. By default this controller uses a trait to
     | provide this functionality without requiring any additional code.
     |
-    */
+     */
 
     use RegistersUsers;
 
@@ -28,7 +29,8 @@ class RegisterController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/home';
+    // protected $redirectTo = '/home';
+    protected $redirectTo = '/';
 
     /**
      * Create a new controller instance.
@@ -49,10 +51,12 @@ class RegisterController extends Controller
     protected function validator(array $data)
     {
         return Validator::make($data, [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
-        ]);
+            'reg_name'     => 'required|string|max:255',
+            'reg_email'    => 'required|string|email|max:255|unique:' . (new User)->getTable() . ',email',
+            'reg_password' => 'required|string|min:6|confirmed',
+            'reg_gender'   => 'string|max:20',
+            'reg_address1' => 'required|string|max:255',
+        );
     }
 
     /**
@@ -63,10 +67,55 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        return User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => Hash::make($data['password']),
+
+        $user = User::create([
+            'name'     => $data['reg_name'],
+            'email'    => $data['reg_email'],
+            'username' => $data['reg_email'],
+            'password' => bcrypt($data['reg_password']),
+            'gender'    => $data['reg_gender'],
+            //'address1' => $data['reg_address1'],
+            //'address2' => $data['reg_address2'],
         ]);
+        // if ($user) {
+        //     if (\Helper::configs()['welcome_customer']) {
+
+        //         $checkContent = (new EmailTemplate)->where('group', 'welcome_customer')->where('status', 1)->first();
+        //         if ($checkContent) {
+        //             $content  = $checkContent->text;
+        //             $dataFind = [
+        //                 '/\{\{\$title\}\}/',
+        //             ];
+        //             $dataReplace = [
+        //                 trans('email.welcome_customer.title'),
+        //             ];
+        //             $content   = preg_replace($dataFind, $dataReplace, $content);
+        //             $data_mail = [
+        //                 'content' => $content,
+        //             ];
+
+        //             $config = [
+        //                 'to'      => $data['reg_email'],
+        //                 'subject' => trans('email.welcome_customer.title'),
+        //             ];
+
+        //             \Helper::sendMail('mail.welcome_customer', $data_mail, $config, []);
+        //         }
+
+        //     }
+        // } else {
+
+        // }
+        return $user;
+    }
+    public function showRegistrationForm()
+    {
+        return redirect()->route('register');
+        // return view('auth.register');
+    }
+
+    protected function registered(Request $request, $user)
+    {
+        redirect()->route('home')->with(['message' => trans('account.register_success')]);
     }
 }
