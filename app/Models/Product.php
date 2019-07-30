@@ -42,7 +42,7 @@ class Product extends Model
     }
     public function love()
     {
-    	return $this->haveMany(Love::class,'product_id','id');
+    	return $this->hasMany(Love::class,'product_id','id');
     }
     
 }

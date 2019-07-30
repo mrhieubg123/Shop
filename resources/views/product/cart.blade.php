@@ -1,7 +1,6 @@
 @extends('layouts.master')
 @section('title','Cart')
 @section('content')
-
 	<section id="cart_items">
 		<div class="container">
 			<div class="breadcrumbs">
@@ -10,6 +9,11 @@
 				  <li class="active">Shopping Cart</li>
 				</ol>
 			</div>
+			@if (!\Session::has('cart'))
+			    <div class="col-md-12 text-danger">
+			        Not found products!
+			    </div>
+			@else
 			<div class="table-responsive cart_info">
 				<table class="table table-condensed">
 					<thead>
@@ -23,162 +27,114 @@
 						</tr>
 					</thead>
 					<tbody>
-						<tr>
-							<td class="cart_product">
-								<a href=""><img src="/images/cart/one.png" alt=""></a>
-							</td>
-							<td class="cart_description">
-								<h4><a href="">Colorblock Scuba</a></h4>
-								<p>Web ID: 1089772</p>
-							</td>
-							<td class="cart_price">
-								<p>$59</p>
-							</td>
-							<td class="cart_quantity">
-								<div class="cart_quantity_button">
-									<a class="cart_quantity_up" href=""> + </a>
-									<input class="cart_quantity_input" type="text" name="quantity" value="1" autocomplete="off" size="2">
-									<a class="cart_quantity_down" href=""> - </a>
-								</div>
-							</td>
-							<td class="cart_total">
-								<p class="cart_total_price">$59</p>
-							</td>
-							<td class="cart_delete">
-								<a class="cart_quantity_delete" href=""><i class="fa fa-times"></i></a>
-							</td>
-						</tr>
-
-						<tr>
-							<td class="cart_product">
-								<a href=""><img src="/images/cart/two.png" alt=""></a>
-							</td>
-							<td class="cart_description">
-								<h4><a href="">Colorblock Scuba</a></h4>
-								<p>Web ID: 1089772</p>
-							</td>
-							<td class="cart_price">
-								<p>$59</p>
-							</td>
-							<td class="cart_quantity">
-								<div class="cart_quantity_button">
-									<a class="cart_quantity_up" href=""> + </a>
-									<input class="cart_quantity_input" type="text" name="quantity" value="1" autocomplete="off" size="2">
-									<a class="cart_quantity_down" href=""> - </a>
-								</div>
-							</td>
-							<td class="cart_total">
-								<p class="cart_total_price">$59</p>
-							</td>
-							<td class="cart_delete">
-								<a class="cart_quantity_delete" href=""><i class="fa fa-times"></i></a>
-							</td>
-						</tr>
-						<tr>
-							<td class="cart_product">
-								<a href=""><img src="/images/cart/three.png" alt=""></a>
-							</td>
-							<td class="cart_description">
-								<h4><a href="">Colorblock Scuba</a></h4>
-								<p>Web ID: 1089772</p>
-							</td>
-							<td class="cart_price">
-								<p>$59</p>
-							</td>
-							<td class="cart_quantity">
-								<div class="cart_quantity_button">
-									<a class="cart_quantity_up" href=""> + </a>
-									<input class="cart_quantity_input" type="text" name="quantity" value="1" autocomplete="off" size="2">
-									<a class="cart_quantity_down" href=""> - </a>
-								</div>
-							</td>
-							<td class="cart_total">
-								<p class="cart_total_price">$59</p>
-							</td>
-							<td class="cart_delete">
-								<a class="cart_quantity_delete" href=""><i class="fa fa-times"></i></a>
-							</td>
-						</tr>
+						@foreach(\Session::get('cart') as $cart)
+							<tr>
+								<td class="cart_product">
+									<a href="{{route('product.details',$cart['id'])}}" ><img src="/{{$cart['img']}}" alt="" style="height: 100px;weight: 100px;"></a>
+								</td>
+								<td class="cart_description">
+									<h4><a href="{{route('product.details',$cart['id'])}}">{{$cart['name']}}</a></h4>
+									<p>Web ID: {{$cart['id']}}</p>
+								</td>
+								<td class="cart_price">
+									<p>${{$cart['price']}}</p>
+								</td>
+								<td class="cart_quantity">
+									<div class="cart_quantity_button">
+										<a class="cart_quantity_up" href="{{route('product.updatecart',[$cart['id'],1])}}"> + </a>
+										<input class="cart_quantity_input" type="text" name="quantity" value="{{$cart['qty']}}" autocomplete="off" size="2">
+										<a class="cart_quantity_down" href="{{route('product.updatecart',[$cart['id'],-1])}}"> - </a>
+									</div>
+								</td>
+								<td class="cart_total">
+									<p class="cart_total_price">${{$cart['price']*$cart['qty']}}</p>
+								</td>
+								<td class="cart_delete">
+									<a onClick="return confirm('Confirm ?')" class="cart_quantity_delete" href="{{route('product.updatecart',[$cart['id'],-$cart['qty']])}}"><i class="fa fa-times"></i></a>
+								</td>
+							</tr>
+						@endforeach
 					</tbody>
+					<tfoot>
+				        <tr  style="background: #eaebec">
+				            <td colspan="7">
+				                 <div class="pull-left">
+				                <button class="btn btn-default" type="button" style="cursor: pointer;padding:10px 30px" onClick="location.href='{{ route('home') }}'"><i class="fa fa-arrow-left"></i>{{ trans('cart.back_to_shop') }}</button>
+				                </div>
+				                 <div class="pull-right">
+				                <a onClick="return confirm('Confirm ?')" href="{{route('product.clearcart')}}"><button class="btn" type="button" style="cursor: pointer;padding:10px 30px">{{ trans('cart.remove_all') }}</button></a>
+				                </div>
+				            </td>
+				        </tr>
+				    </tfoot>
 				</table>
+				<form class="shipping_address" id="form-order" role="form" method="POST" action="{{ route('member.checkout') }}">
+					<div class="row">
+					    <div class="col-md-6">
+					            {{ csrf_field() }}
+					            <table class="table  table-bordered table-responsive">
+					                <tr>
+					                    <td class="form-group{{ $errors->has('toname') ? ' has-error' : '' }}">
+					                        <label for="phone" class="control-label"><i class="fa fa-user"></i> {{ trans('cart.to_name') }}:</label> <input name="toname" type="text" placeholder="{{ trans('cart.to_name') }}" value="{{(old('toname'))}}">
+					                            @if($errors->has('toname'))
+					                                <span class="help-block">{{ $errors->first('toname') }}</span>
+					                            @endif
+					                        </td>
+					                    <td class="form-group{{ $errors->has('phone') ? ' has-error' : '' }}">
+					                        <label for="phone" class="control-label"><i class="fa fa-volume-control-phone"></i> {{ trans('cart.phone') }}:</label> <input name="phone" type="text" placeholder="{{ trans('cart.phone') }}" value="{{(old('phone'))}}">
+					         
+					                        </td>
+					                </tr>
+					            
+
+					                <tr>
+					                    <td class="form-group{{ $errors->has('address1') ? ' has-error' : '' }}"><label for="address1" class="control-label"><i class="fa fa-home"></i> {{ trans('cart.address1') }}:</label> <input name="address1" type="text" placeholder="{{ trans('cart.address1') }}" value="{{ (old('address1'))}}">
+					                            @if($errors->has('address1'))
+					                                <span class="help-block">{{ $errors->first('address1') }}</span>
+					                            @endif</td>
+					
+					                </tr>
+					             
+					            </table>
+
+					    </div>
+					    <div class="col-md-6">
+					{{-- Total --}}
+					        <div class="row">
+					            <div class="col-md-12">
+					                <table class="table box table-bordered" id="showTotal">
+					                	@php
+					                		$total=0;
+					                    @endphp
+					                    @foreach (\Session::get('cart') as $cart)
+					                    	@php
+					                    	$total+=$cart['price']*$cart['qty'];
+					                    	@endphp
+					                    @endforeach
+					                    <tr class="showTotal" style="background:#f5f3f3;font-weight: bold;">
+				                    		<th>Total</th>
+				                            <td style="text-align: right" id="total">{{$total }}</td>
+				                        </tr>
+					                </table>
+					            </div>
+					        </div>
+					{{-- End total --}}
+					        <div class="row" style="padding-bottom: 20px;">
+					            <div class="col-md-12 text-center">
+					                    <div class="pull-right">
+					                        <button class="btn btn-success" id="submit-order" type="submit" style="cursor: pointer;padding:10px 30px"><i class="fa fa-check"></i> {{ trans('cart.checkout') }}</button>
+					                    </div>
+					            </div>
+					        </div>
+
+
+
+					    </div>
+					</div>
+					</form>
 			</div>
+			@endif
 		</div>
 	</section> <!--/#cart_items-->
-
-	<section id="do_action">
-		<div class="container">
-			<div class="heading">
-				<h3>What would you like to do next?</h3>
-				<p>Choose if you have a discount code or reward points you want to use or would like to estimate your delivery cost.</p>
-			</div>
-			<div class="row">
-				<div class="col-sm-6">
-					<div class="chose_area">
-						<ul class="user_option">
-							<li>
-								<input type="checkbox">
-								<label>Use Coupon Code</label>
-							</li>
-							<li>
-								<input type="checkbox">
-								<label>Use Gift Voucher</label>
-							</li>
-							<li>
-								<input type="checkbox">
-								<label>Estimate Shipping & Taxes</label>
-							</li>
-						</ul>
-						<ul class="user_info">
-							<li class="single_field">
-								<label>Country:</label>
-								<select>
-									<option>United States</option>
-									<option>Bangladesh</option>
-									<option>UK</option>
-									<option>India</option>
-									<option>Pakistan</option>
-									<option>Ucrane</option>
-									<option>Canada</option>
-									<option>Dubai</option>
-								</select>
-								
-							</li>
-							<li class="single_field">
-								<label>Region / State:</label>
-								<select>
-									<option>Select</option>
-									<option>Dhaka</option>
-									<option>London</option>
-									<option>Dillih</option>
-									<option>Lahore</option>
-									<option>Alaska</option>
-									<option>Canada</option>
-									<option>Dubai</option>
-								</select>
-							
-							</li>
-							<li class="single_field zip-field">
-								<label>Zip Code:</label>
-								<input type="text">
-							</li>
-						</ul>
-						<a class="btn btn-default update" href="">Get Quotes</a>
-						<a class="btn btn-default check_out" href="">Continue</a>
-					</div>
-				</div>
-				<div class="col-sm-6">
-					<div class="total_area">
-						<ul>
-							<li>Cart Sub Total <span>$59</span></li>
-							<li>Eco Tax <span>$2</span></li>
-							<li>Shipping Cost <span>Free</span></li>
-							<li>Total <span>$61</span></li>
-						</ul>
-							<a class="btn btn-default update" href="">Update</a>
-							<a class="btn btn-default check_out" href="">Check Out</a>
-					</div>
-				</div>
-			</div>
-		</div>
-	</section><!--/#do_action-->
+			
 @stop

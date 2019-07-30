@@ -67,20 +67,12 @@
                         @endif
                     </div>
 
+
                     <div class="form-group{{ $errors->has('reg_gender') ? ' has-error' : '' }}">
                         <input  type="text" class="is_required validate account_input form-control {{ ($errors->has('reg_gender'))?"input-error":"" }}"   name="reg_gender" placeholder="Gender" value="{{ old('reg_gender') }}">
                         @if ($errors->has('reg_gender'))
                         <span class="help-block">
                             {{ $errors->first('reg_gender') }}
-                        </span>
-                        @endif
-                    </div>
-
-                    <div class="form-group{{ $errors->has('reg_address1') ? ' has-error' : '' }}">
-                        <input  type="text" class="is_required validate account_input form-control {{ ($errors->has('reg_address1'))?"input-error":"" }}"   name="reg_address1" placeholder="Address 1" value="{{ old('reg_address1') }}">
-                        @if ($errors->has('reg_address1'))
-                        <span class="help-block">
-                            {{ $errors->first('reg_address1') }}
                         </span>
                         @endif
                     </div>

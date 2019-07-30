@@ -30,7 +30,7 @@
 				<div class="row">
 					<div class="col-sm-4">
 						<div class="logo pull-left">
-							<a href="{{url('index.html')}}"><img src="/images/home/logo.png" alt="" /></a>
+							<a href="{{route('home')}}"><img src="/images/home/logo.png" alt="" /></a>
 						</div>
 						<div class="btn-group pull-right">
 							<div class="btn-group">
@@ -39,8 +39,10 @@
 									<span class="caret"></span>
 								</button>
 								<ul class="dropdown-menu">
-									<li><a href="#">Canada</a></li>
-									<li><a href="#">UK</a></li>
+									<li><a href="{{ url('?lang=en') }}"><img src="" style="height: 25px;">English</a></li>
+									<li><a href="{{ url('?lang=vi') }}"><img src="" style="height: 25px;">Vietnamese</a></li>
+									<li><a href="{{ url('?lang=ja') }}"><img src="" style="height: 25px;">Japaness</a></li>
+									
 								</ul>
 							</div>
 							
@@ -60,7 +62,7 @@
 						<div class="shop-menu pull-right">
 							<ul class="nav navbar-nav">
 								<li><a href="#"><i class="fa fa-user"></i> Account</a></li>
-								<li><a href="#"><i class="fa fa-star"></i> Wishlist</a></li>
+								<li><a href="{{route('member.wishlist')}}"><i class="fa fa-star"></i> Wishlist</a></li>
 								<li><a href="checkout.html"><i class="fa fa-crosshairs"></i> Checkout</a></li>
 								<li><a href="{{route('product.cart')}}"><i class="fa fa-shopping-cart"></i> Cart</a></li>
 								{{-- <li><a href="login.html"><i class="fa fa-lock"></i> Login</a></li> --}}
@@ -95,24 +97,21 @@
 						</div>
 						<div class="mainmenu pull-left">
 							<ul class="nav navbar-nav collapse navbar-collapse">
-								<li><a href="index.html" class="active">Home</a></li>
+								<li><a href="{{route('home')}}" class="active">Home</a></li>
 								<li class="dropdown"><a href="#">Shop<i class="fa fa-angle-down"></i></a>
                                     <ul role="menu" class="sub-menu">
                                         <li><a href="shop.html">Products</a></li>
-										<li><a href="product-details.html">Product Details</a></li> 
-										<li><a href="checkout.html">Checkout</a></li> 
 										<li><a href="{{route('product.cart')}}">Cart</a></li> 
-										<li><a href="login.html">Login</a></li> 
                                     </ul>
                                 </li> 
 								<li class="dropdown"><a href="#">Blog<i class="fa fa-angle-down"></i></a>
                                     <ul role="menu" class="sub-menu">
-                                        <li><a href="blog.html">Blog List</a></li>
-										<li><a href="blog-single.html">Blog Single</a></li>
+                                        <li><a href="">Blog List</a></li>
+										<li><a href="">Blog Single</a></li>
                                     </ul>
                                 </li> 
-								<li><a href="404.html">404</a></li>
-								<li><a href="contact-us.html">Contact</a></li>
+								<li><a href="">404</a></li>
+								<li><a href="">Contact</a></li>
 							</ul>
 						</div>
 					</div>

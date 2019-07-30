@@ -40,12 +40,25 @@ Route::group(['prefix' => 'member', 'middleware' => 'auth'], function ($router) 
     $router->post('/change_password.html', 'ShopAccount@postChangePassword')->name('member.post_change_password');
     $router->get('/change_infomation.html', 'ShopAccount@changeInfomation')->name('member.change_infomation');
     $router->post('/change_infomation.html', 'ShopAccount@postChangeInfomation')->name('member.post_change_infomation');
+    $router->get('/wishlist.html','ShopAccount@wishList')->name('member.wishlist');
+    $router->get('/addtowishlist/{id}','ShopAccount@addToWishList')->name('member.addtowishlist');
+    $router->post('/checkout.html','ShopAccount@checkout')->name('member.checkout');
+    $router->get('/checkoutconfirm.html','ShopAccount@checkoutConfirm')->name('member.checkoutconfirm');
 });
 //End customer
 
-Route::prefix('')->namespace('Product')->name('product.')->group(function () {
+Route::prefix('product')->namespace('Product')->name('product.')->group(function () {
     //Route::get('/details', 'ProductController@details')->name('details');
     Route::get('/cart', 'ProductController@cart')->name('cart');
     Route::get('/details/{id}','ProductController@details')->name('details');
     Route::get('/{id}','ProductController@addToCart')->name('addtocart');
+    Route::get('/cart/{id}/{qty}','ProductController@updateCart')->name('updatecart');
+    Route::get('/update/{id}','ProductController@updateToCart')->name('updatetocart');
+    Route::get('/clear','ProductController@clearCart')->name('clearcart');
 });
+//Language
+Route::get('locale/{code}', function ($code) {
+    session(['locale' => $code]);
+    app()->setLocale($code);
+    return back();
+})->name('locale');

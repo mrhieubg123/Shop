@@ -11,7 +11,7 @@ class ProductOrder extends Model
      *
      * @var array
      */
-    protected $table = "product_order";
+    protected $table = "product_orders";
     protected $fillable = [
         'order_id',
         'product_id',

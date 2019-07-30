@@ -54,8 +54,7 @@ class RegisterController extends Controller
             'reg_name'     => 'required|string|max:255',
             'reg_email'    => 'required|string|email|max:255|unique:' . (new User)->getTable() . ',email',
             'reg_password' => 'required|string|min:6|confirmed',
-            'reg_gender'   => 'string|max:20',
-            'reg_address1' => 'required|string|max:255',
+            'reg_gender' => 'required|string|max:20',]
         );
     }
 
@@ -74,8 +73,6 @@ class RegisterController extends Controller
             'username' => $data['reg_email'],
             'password' => bcrypt($data['reg_password']),
             'gender'    => $data['reg_gender'],
-            //'address1' => $data['reg_address1'],
-            //'address2' => $data['reg_address2'],
         ]);
         // if ($user) {
         //     if (\Helper::configs()['welcome_customer']) {
